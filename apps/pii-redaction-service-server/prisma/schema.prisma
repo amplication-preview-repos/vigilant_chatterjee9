@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model RedactedText {
+  content        String?
+  createdAt      DateTime @default(now())
+  id             String   @id @default(cuid())
+  originalTextId String?
+  piis           Pii[]
+  updatedAt      DateTime @updatedAt
+}
+
+model TextInput {
+  content   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model Pii {
+  confidence     Float?
+  createdAt      DateTime      @default(now())
+  id             String        @id @default(cuid())
+  redactedText   RedactedText? @relation(fields: [redactedTextId], references: [id])
+  redactedTextId String?
+  typeField      String?
+  updatedAt      DateTime      @updatedAt
+  value          String?
+}
